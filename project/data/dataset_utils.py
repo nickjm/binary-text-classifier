@@ -70,6 +70,6 @@ def load_dataset(args):
         embeddings_path = args.word_embeddings
         embeddings, word_to_indx = get_embedding_tensor(embeddings_path)
         args.embedding_dim = embeddings.shape[1]
-        train_data = emb_dataset.BinaryClassTextEmbeddingsDataset(train_path, word_to_indx, nil_id=NIL_EMBEDDING_ID, pad_id=PAD_EMBEDDING_ID)
-        dev_data = emb_dataset.BinaryClassTextEmbeddingsDataset(dev_path, word_to_indx, nil_id=NIL_EMBEDDING_ID, pad_id=PAD_EMBEDDING_ID)
+        train_data = emb_dataset.BinaryClassTextEmbeddingsDataset(train_path, word_to_indx, max_length=args.max_seq_length, nil_id=NIL_EMBEDDING_ID, pad_id=PAD_EMBEDDING_ID)
+        dev_data = emb_dataset.BinaryClassTextEmbeddingsDataset(dev_path, word_to_indx, max_length=args.max_seq_length, nil_id=NIL_EMBEDDING_ID, pad_id=PAD_EMBEDDING_ID)
         return train_data, dev_data, embeddings

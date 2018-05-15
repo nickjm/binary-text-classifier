@@ -13,6 +13,8 @@ def get_model(embeddings, args):
         return DAN(embeddings, args)
     elif args.model_name == 'FC':
         return DAN(embeddings, args)
+    elif args.model_name == 'FC2':
+        return FC2(embeddings, args)
     elif args.model_name == 'rnn':
         return RNN(embeddings, args)
     elif args.model_name == 'lstm1':
@@ -143,6 +145,27 @@ class LSTM2(nn.Module):
         _, (h_n, c_n) = self.lstm(all_x, (h0, c0))
         h_n = h_n.view(-1, self.args.num_hidden)
         out = self.fc1(h_n)
+        return out
+
+
+class FC2(nn.Module):
+
+    def __init__(self, embeddings, args):
+        super(FC2, self).__init__()
+        self.args = args
+        vocab_size, embed_dim = embeddings.shape
+        self.embed_dim = embed_dim
+        self.embedding_layer = nn.Embedding.from_pretrained(torch.from_numpy(embeddings), freeze=args.freeze_embeddings)
+        self.fc1 = nn.Linear(embed_dim*args.max_seq_length, args.num_hidden)
+        # self.fc2 = nn.Linear(args.num_hidden_discriminator, args.num_hidden_discriminator)
+        self.fc3 = nn.Linear(args.num_hidden, 1)
+
+    def forward(self, x):
+        x = self.embedding_layer(x)
+        xf = x.view(-1, x.size()[1]*x.size()[2])
+        h = F.elu(self.fc1(xf))
+        # h = F.elu(self.fc2(h))
+        out = self.fc3(h)
         return out
 
 

@@ -19,6 +19,7 @@ def get_args():
     parser.add_argument('--lr', type=float, default=0.001, help='initial learning rate [default: 0.001]')
     parser.add_argument('--epochs', type=int, default=256, help='number of epochs for train [default: 256]')
     parser.add_argument('--batch_size', type=int, default=128, help='batch size for training [default: 64]')
+    parser.add_argument('--loss', type=str, default='MSE', help='type of loss to use')
     # Data loading
     parser.add_argument('--num_workers', nargs='?', type=int, default=4, help='num workers for data loader')
     parser.add_argument('--bow', action='store_true', default=False, help='use bow representation instead of embeddings')
@@ -29,6 +30,7 @@ def get_args():
     # Model
     parser.add_argument('--num_hidden', type=int, default=200, help='num hidden units [default: 200]')
     parser.add_argument('--model_name', nargs="?", type=str, default='dan', help="Form of model, i.e dan, rnn, etc.")
+    parser.add_argument('--freeze_embeddings', action='store_true', default=False, help='whether or not to calculate gradients and update word embedding weights')
     # Device
     parser.add_argument('--cuda', action='store_true', default=False, help='enable the gpu')
     parser.add_argument('--train', action='store_true', default=False, help='enable train')

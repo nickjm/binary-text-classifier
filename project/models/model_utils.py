@@ -29,7 +29,7 @@ class DAN(nn.Module):
         super(DAN, self).__init__()
         self.args = args
         vocab_size, embed_dim = embeddings.shape
-        self.embedding_layer = nn.Embedding.from_pretrained(torch.from_numpy(embeddings), freeze=True)
+        self.embedding_layer = nn.Embedding.from_pretrained(torch.from_numpy(embeddings), freeze=args.freeze_embeddings)
         # self.embedding_layer = nn.Embedding( vocab_size, embed_dim)
         # self.embedding_layer.weight.data = torch.from_numpy( embeddings )
         self.W_hidden = nn.Linear(embed_dim, args.num_hidden)
@@ -47,7 +47,7 @@ class FC(nn.Module):
         super(FC, self).__init__()
         self.args = args
         _, embed_dim = embeddings.shape
-        self.embedding_layer = nn.Embedding.from_pretrained(torch.from_numpy(embeddings), freeze=True)
+        self.embedding_layer = nn.Embedding.from_pretrained(torch.from_numpy(embeddings), freeze=args.freeze_embeddings)
         self.fc1 = nn.Linear(embed_dim*100, args.num_hidden)
         # self.fc2 = nn.Linear(args.num_hidden_discriminator, args.num_hidden_discriminator)
         self.fc3 = nn.Linear(args.num_hidden, 1)
@@ -67,7 +67,7 @@ class RNN(nn.Module):
         self.args = args
         vocab_size, embed_dim = embeddings.shape
         self.embed_dim = embed_dim
-        self.embedding_layer = nn.Embedding.from_pretrained(torch.from_numpy(embeddings), freeze=True)
+        self.embedding_layer = nn.Embedding.from_pretrained(torch.from_numpy(embeddings), freeze=args.freeze_embeddings)
         # self.embedding_layer = nn.Embedding(vocab_size, embed_dim)
         # self.embedding_layer.weight.data = torch.from_numpy(embeddings)
         self.rnn = nn.RNN(input_size=embed_dim, hidden_size=args.num_hidden,
@@ -92,7 +92,7 @@ class LSTM1(nn.Module):
         self.embed_dim = embed_dim
         # self.embedding_layer = nn.Embedding(vocab_size, embed_dim)
         # self.embedding_layer.weight.data = torch.from_numpy(embeddings)
-        self.embedding_layer = nn.Embedding.from_pretrained(torch.from_numpy(embeddings), freeze=True)
+        self.embedding_layer = nn.Embedding.from_pretrained(torch.from_numpy(embeddings), freeze=args.freeze_embeddings)
         self.lstm = nn.LSTM(input_size=embed_dim, hidden_size=args.num_hidden,
                           num_layers=1, batch_first=True)
         self.W_o = nn.Linear(args.num_hidden, 1)
@@ -121,7 +121,7 @@ class LSTM2(nn.Module):
         self.args = args
         vocab_size, embed_dim = embeddings.shape
         self.embed_dim = embed_dim
-        self.embedding_layer = nn.Embedding.from_pretrained(torch.from_numpy(embeddings), freeze=True)
+        self.embedding_layer = nn.Embedding.from_pretrained(torch.from_numpy(embeddings), freeze=args.freeze_embeddings)
         # self.embedding_layer.weight.data = torch.from_numpy(embeddings)
         # self.embedding_layer.weight.requires_grad = False
         self.lstm = nn.LSTM(input_size=embed_dim, hidden_size=(args.num_hidden // 2),

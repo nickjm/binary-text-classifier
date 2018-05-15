@@ -61,14 +61,18 @@ def run_epoch(data, is_training, model, optimizer, args):
         if is_training:
             optimizer.zero_grad()
         out = model(x)
-        loss = F.mse_loss(out, y.float())
-        # loss = F.binary_cross_entropy_with_logits(out, y.float())
+        if args.loss == "MSE":
+            loss = F.mse_loss(out, y.float())
+        elif args.loss == "BCE":
+            loss = F.binary_cross_entropy_with_logits(out, y.float())
+        else:
+            raise Exception("invalid loss parameter")
         if is_training:
             loss.backward()
             optimizer.step()
         losses.append(loss.cpu().item())
-        predictions = np.rint(out.detach().numpy())
-        accuracy = compute_accuracy(predictions, y.detach().numpy())
+        predictions = np.rint(out.cpu().detach().numpy())
+        accuracy = compute_accuracy(predictions, y.cpu().detach().numpy())
         accuracies.append(accuracy)
     # Calculate epoch level scores
     avg_loss = np.mean(losses)

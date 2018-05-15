@@ -30,7 +30,7 @@ def main(args):
                         pbar.update()
 
 def get_args():
-    parser = argparse.ArgumentParser(description='PyTorch Binary Text Classifier')
+    parser = argparse.ArgumentParser(description='Prune line separated embedding file to only those tokens found in a given text corpus in the format (label, sentence pairs)')
     parser.add_argument('--embeddings', type=str, help='path to embeddings')
     parser.add_argument('--corpus', type=str, help='path to corpus')
     parser.add_argument('--save_path', type=str, help='path to save pruned embeddings')

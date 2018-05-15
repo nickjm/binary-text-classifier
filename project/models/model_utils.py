@@ -125,7 +125,7 @@ class LSTM2(nn.Module):
         # self.embedding_layer.weight.data = torch.from_numpy(embeddings)
         # self.embedding_layer.weight.requires_grad = False
         self.lstm = nn.LSTM(input_size=embed_dim, hidden_size=(args.num_hidden // 2),
-                          num_layers=1, batch_first=True, bidirectional=True, dropout=0.1)
+                          num_layers=1, batch_first=True, bidirectional=True, dropout=args.dropout)
         self.fc1 = nn.Linear(args.num_hidden, 1)
 
     def init_hidden_states(self, batch_size):

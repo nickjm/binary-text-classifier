@@ -15,6 +15,8 @@ def get_model(embeddings, args):
         return DAN(embeddings, args)
     elif args.model_name == 'FC2':
         return FC2(embeddings, args)
+    elif args.model_name == 'cnn':
+        return CNN(embeddings, args)
     elif args.model_name == 'rnn':
         return RNN(embeddings, args)
     elif args.model_name == 'lstm1':
@@ -161,12 +163,46 @@ class FC2(nn.Module):
         self.fc3 = nn.Linear(args.num_hidden, 1)
 
     def forward(self, x):
+        # print(x.cpu())
         x = self.embedding_layer(x)
+        # print(x.cpu())
+        # print("second dim: ", str(x.size()[1]))
+        # print("third dim: ", str(x.size()[2]))
         xf = x.view(-1, x.size()[1]*x.size()[2])
+        # print(xf.cpu())
         h = F.elu(self.fc1(xf))
         # h = F.elu(self.fc2(h))
         out = self.fc3(h)
         return out
+
+
+class CNN(nn.Module):
+
+    def __init__(self, embeddings, args):
+        super(CNN, self).__init__()
+        self.args = args
+        vocab_size, embed_dim = embeddings.shape
+        self.embed_dim = embed_dim
+        self.embedding_layer = nn.Embedding.from_pretrained(torch.from_numpy(embeddings), freeze=args.freeze_embeddings)
+
+        Ci = 1
+        Co = args.kernel_num
+        Ks = args.kernel_sizes
+
+        # self.convs1 = [nn.Conv2d(Ci, Co, (K, D)) for K in Ks]
+        self.convs1 = nn.ModuleList([nn.Conv2d(Ci, Co, (K, embed_dim)) for K in Ks])
+        self.dropout = nn.Dropout(args.dropout)
+        self.fc1 = nn.Linear(len(Ks)*Co, 1)
+
+    def forward(self, x):
+        x = self.embedding_layer(x)  # (N, W, D)
+        x = x.unsqueeze(1)  # (N, Ci, W, D)
+        x = [F.relu(conv(x)).squeeze(3) for conv in self.convs1]  # [(N, Co, W), ...]*len(Ks)
+        x = [F.max_pool1d(i, i.size(2)).squeeze(2) for i in x]  # [(N, Co), ...]*len(Ks)
+        x = torch.cat(x, 1)
+        x = self.dropout(x)  # (N, len(Ks)*Co)
+        logit = self.fc1(x)  # (N, C)
+        return logit
 
 
 class LinearBoWClassifier(nn.Module):  # inheriting from nn.Module!

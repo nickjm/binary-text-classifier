@@ -31,7 +31,9 @@ def get_args():
     parser.add_argument('--num_hidden', type=int, default=200, help='num hidden units [default: 200]')
     parser.add_argument('--model_name', nargs="?", type=str, default='dan', help="Form of model, i.e dan, rnn, etc.")
     parser.add_argument('--freeze_embeddings', action='store_true', default=False, help='whether or not to calculate gradients and update word embedding weights')
-    parser.add_argument('--dropout', type=int, default=0.0, help='If non-zero, introduces a Dropout layer on the outputs of each LSTM layer except the last layer, with dropout probability equal to dropout. Default: 0')
+    parser.add_argument('--dropout', type=int, default=0.0, help='If non-zero, introduces a Dropout layer on the outputs of each LSTM / CNN layer except the last layer, with dropout probability equal to dropout. Default: 0')
+    parser.add_argument('--kernel_num', type=int, default=3, help='Number of kernels / CNN layers')
+    parser.add_argument('--kernel_sizes', nargs='?', type=int, default=[3, 4, 5], help='Sizes of kernels in CNN')
     # Device
     parser.add_argument('--cuda', action='store_true', default=False, help='enable the gpu')
     parser.add_argument('--train', action='store_true', default=False, help='enable train')
